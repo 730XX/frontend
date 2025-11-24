@@ -1,0 +1,37 @@
+<aside
+    class="border-r bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out h-screen flex flex-col bg-white"
+    [ngClass]="collapsed ? 'w-16' : 'w-64'">
+    <div class="flex flex-col h-full">
+
+        <div class="p-4 flex items-center gap-2">
+            <div class="h-8 w-8 min-w-[2rem] rounded-lg bg-slate-900 flex items-center justify-center">
+                <lucide-icon [img]="icons.Package" class="h-5 w-5 text-white"></lucide-icon>
+            </div>
+
+            <div *ngIf="!collapsed" class="overflow-hidden whitespace-nowrap">
+                <h2 class="text-sm font-semibold text-sidebar-foreground">
+                    Sistema Inventario
+                </h2>
+            </div>
+        </div>
+
+        <div class="px-2 py-2 flex-1">
+            <div class="text-xs font-medium text-muted-foreground px-2 mb-2" *ngIf="!collapsed">
+                Gestión
+            </div>
+
+            <ul class="space-y-1">
+                <li *ngFor="let item of menuItems">
+                    <a [routerLink]="item.url" routerLinkActive="bg-slate-100 text-slate-900 font-medium"
+                        class="flex items-center gap-2 px-2 py-2 hover:bg-slate-50 rounded-md transition-colors text-slate-600">
+                        <lucide-icon [img]="item.icon" class="h-4 w-4"></lucide-icon>
+                        <span *ngIf="!collapsed" class="overflow-hidden whitespace-nowrap">
+                            {{ item.title }}
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</aside>
