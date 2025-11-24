@@ -1,9 +1,16 @@
-<div class="flex h-screen overflow-hidden">
+<div *ngIf="!isLoginPage" class="flex h-screen overflow-hidden bg-background">
   <!-- Sidebar -->
   <app-sidebar [collapsed]="false"></app-sidebar>
 
   <!-- Contenido Principal -->
-  <main class="flex-1 overflow-y-auto bg-gray-50">
-    <router-outlet></router-outlet>
+  <main class="flex-1 overflow-y-auto bg-muted/30">
+    <div class="container mx-auto p-6 max-w-7xl">
+      <router-outlet></router-outlet>
+    </div>
   </main>
+</div>
+
+<!-- Layout para Login (sin sidebar) -->
+<div *ngIf="isLoginPage">
+  <router-outlet></router-outlet>
 </div>

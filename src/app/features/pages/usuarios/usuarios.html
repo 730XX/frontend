@@ -20,7 +20,24 @@
         </div>
 
         <div class="p-6 pt-0">
-            <div class="overflow-x-auto">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-current border-r-transparent align-[-0.125em] text-primary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+                <p class="mt-4 text-muted-foreground">Cargando usuarios...</p>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="error && !loading" class="text-center py-12">
+                <div class="rounded-lg bg-destructive/10 border border-destructive/20 p-6 max-w-md mx-auto">
+                    <p class="text-destructive font-medium">{{ error }}</p>
+                    <button (click)="cargarUsuarios()" class="btn btn-outline mt-4">
+                        Reintentar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla de Usuarios -->
+            <div *ngIf="!loading && !error" class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="[&_tr]:border-b">
                         <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
@@ -29,44 +46,62 @@
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Correo</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Rol</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Estado</th>
+                            <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Creado</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="[&_tr:last-child]:border-0">
-                        <tr *ngFor="let usuario of mockUsuarios"
+                        <!-- Empty State -->
+                        <tr *ngIf="usuarios.length === 0">
+                            <td colspan="7" class="p-12 text-center text-muted-foreground">
+                                <p class="text-lg">No hay usuarios registrados</p>
+                                <button (click)="navegarNuevo()" class="btn btn-primary mt-4">
+                                    <lucide-icon [img]="icons.Plus" class="h-4 w-4 mr-2"></lucide-icon>
+                                    Crear Primer Usuario
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Usuarios Data -->
+                        <tr *ngFor="let usuario of usuarios"
                             class="border-b transition-colors hover:bg-slate-100/50">
-                            <td class="p-4 align-middle">{{ usuario.id }}</td>
-                            <td class="p-4 align-middle font-medium">{{ usuario.nombre }}</td>
-                            <td class="p-4 align-middle text-slate-500">{{ usuario.correo }}</td>
+                            <td class="p-4 align-middle font-mono text-xs">{{ usuario.usuarios_id }}</td>
+                            <td class="p-4 align-middle font-medium">{{ usuario.usuarios_nombre }}</td>
+                            <td class="p-4 align-middle text-slate-500">{{ usuario.usuarios_correo }}</td>
 
                             <td class="p-4 align-middle">
-                                <div
-                                    class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 text-slate-950">
-                                    {{ usuario.rol }}
-                                </div>
+                                <span class="badge" [ngClass]="getRolClass(usuario.usuarios_rol)">
+                                    {{ usuario.usuarios_rol }}
+                                </span>
                             </td>
 
                             <td class="p-4 align-middle">
-                                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 border-transparent text-white shadow hover:opacity-80"
-                                    [ngClass]="usuario.estado === 'ACTIVO' ? 'bg-slate-900' : 'bg-slate-500'">
-                                    {{ usuario.estado }}
-                                </div>
+                                <span class="badge" [ngClass]="getEstadoClass(usuario.usuarios_estado)">
+                                    {{ getEstadoTexto(usuario.usuarios_estado) }}
+                                </span>
+                            </td>
+
+                            <td class="p-4 align-middle text-xs text-slate-500">
+                                {{ usuario.usuarios_creado_en }}
                             </td>
 
                             <td class="p-4 align-middle">
                                 <div class="flex gap-2">
-                                    <button (click)="verUsuario(usuario.id)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8">
+                                    <button (click)="verUsuario(usuario.usuarios_id)"
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
+                                        title="Ver detalles">
                                         <lucide-icon [img]="icons.Eye" class="h-4 w-4"></lucide-icon>
                                     </button>
 
-                                    <button (click)="editarUsuario(usuario.id)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8">
+                                    <button (click)="editarUsuario(usuario.usuarios_id)"
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
+                                        title="Editar">
                                         <lucide-icon [img]="icons.Pencil" class="h-4 w-4"></lucide-icon>
                                     </button>
 
-                                    <button
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8">
+                                    <button (click)="cambiarEstado(usuario)"
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
+                                        [title]="usuario.usuarios_estado === 1 ? 'Desactivar' : 'Activar'">
                                         <lucide-icon [img]="icons.X" class="h-4 w-4"></lucide-icon>
                                     </button>
                                 </div>

@@ -1,0 +1,149 @@
+<div class="login-container">
+  <!-- Lado Izquierdo - Branding -->
+  <div class="login-branding">
+    <div class="branding-content">
+      <div class="logo-wrapper">
+        <div class="logo-icon">
+          <lucide-icon [img]="icons.Package" class="h-12 w-12 text-white"></lucide-icon>
+        </div>
+        <h1 class="brand-title">Sistema de Inventario</h1>
+      </div>
+      
+      <p class="brand-description">
+        Gestiona tu inventario de manera eficiente y profesional.
+        Control total de productos, movimientos y usuarios.
+      </p>
+
+      <div class="features-list">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <lucide-icon [img]="icons.Package" class="h-5 w-5"></lucide-icon>
+          </div>
+          <span>Gestión de Productos</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <lucide-icon [img]="icons.Package" class="h-5 w-5"></lucide-icon>
+          </div>
+          <span>Control de Movimientos</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <lucide-icon [img]="icons.Package" class="h-5 w-5"></lucide-icon>
+          </div>
+          <span>Administración de Usuarios</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lado Derecho - Formulario de Login -->
+  <div class="login-form-section">
+    <div class="form-container">
+      <!-- Header -->
+      <div class="form-header">
+        <h2 class="form-title">Iniciar Sesión</h2>
+        <p class="form-subtitle">Ingresa tus credenciales para acceder al sistema</p>
+      </div>
+
+      <!-- Alert de Error -->
+      <div *ngIf="error" class="alert-error">
+        <span>{{ error }}</span>
+      </div>
+
+      <!-- Formulario -->
+      <form (ngSubmit)="onSubmit()" class="login-form">
+        <!-- Campo Email -->
+        <div class="form-group">
+          <label for="correo" class="form-label">
+            <lucide-icon [img]="icons.Mail" class="h-4 w-4 mr-2"></lucide-icon>
+            Correo Electrónico
+          </label>
+          <input
+            type="email"
+            id="correo"
+            name="correo"
+            [(ngModel)]="correo"
+            class="input"
+            placeholder="admin@restaurant.pe"
+            [disabled]="loading"
+            required
+          />
+        </div>
+
+        <!-- Campo Password -->
+        <div class="form-group">
+          <label for="password" class="form-label">
+            <lucide-icon [img]="icons.Lock" class="h-4 w-4 mr-2"></lucide-icon>
+            Contraseña
+          </label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              [(ngModel)]="password"
+              class="input"
+              placeholder="••••••"
+              [disabled]="loading"
+              required
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [disabled]="loading"
+            >
+              <lucide-icon 
+                [img]="showPassword ? icons.EyeOff : icons.Eye" 
+                class="h-5 w-5"
+              ></lucide-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recordarme y Olvidé Contraseña -->
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="rememberMe"
+              name="rememberMe"
+              class="checkbox"
+              [disabled]="loading"
+            />
+            <span>Recordarme</span>
+          </label>
+          <a href="#" class="link-text">Olvidé mi contraseña</a>
+        </div>
+
+        <!-- Botón Submit -->
+        <button
+          type="submit"
+          class="btn btn-primary w-full btn-lg"
+          [disabled]="loading"
+        >
+          <span *ngIf="!loading">Iniciar Sesión</span>
+          <span *ngIf="loading" class="flex items-center justify-center gap-2">
+            <span class="spinner"></span>
+            Iniciando sesión...
+          </span>
+        </button>
+      </form>
+
+      <!-- Credenciales de Demo -->
+      <div class="demo-credentials">
+        <p class="demo-title">👉 Credenciales de Demo:</p>
+        <div class="demo-info">
+          <p><strong>Correo:</strong> admin@restaurant.pe</p>
+          <p><strong>Contraseña:</strong> 123456</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <p>© 2025 Sistema de Inventario. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </div>
+</div>
