@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Eye, Pencil, Plus, X } from 'lucide-angular';
+import { ProductosService } from '../../../core/services/productos.service';
+import { Producto } from '../../../core/interfaces/api-response.interface';
 
 @Component({
   selector: 'app-productos',
@@ -8,49 +10,55 @@ import { Eye, Pencil, Plus, X } from 'lucide-angular';
   templateUrl: './productos.html',
   styleUrl: './productos.scss',
 })
-export class Productos {
+export class Productos implements OnInit {
   readonly icons = { Plus, Eye, Pencil, X };
 
-  mockProductos = [
-    {
-      id: 1,
-      nombre: "Laptop Dell XPS 15",
-      codigo: "LAP-001",
-      unidad: "UNIDAD",
-      precio: 1299.99,
-      stock: 15,
-      estado: "ACTIVO",
-    },
-    {
-      id: 2,
-      nombre: "Mouse Logitech MX Master 3",
-      codigo: "MOU-002",
-      unidad: "UNIDAD",
-      precio: 99.99,
-      stock: 45,
-      estado: "ACTIVO",
-    },
-    {
-      id: 3,
-      nombre: "Teclado Mecánico Keychron K2",
-      codigo: "TEC-003",
-      unidad: "UNIDAD",
-      precio: 89.99,
-      stock: 0,
-      estado: "INACTIVO",
-    },
-    {
-      id: 4,
-      nombre: "Monitor LG UltraWide 34\"",
-      codigo: "MON-004",
-      unidad: "UNIDAD",
-      precio: 449.99,
-      stock: 8,
-      estado: "ACTIVO",
-    },
-  ];
+  // Datos reales del backend
+  productos: Producto[] = [];
+  loading: boolean = false;
+  error: string = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private productosService: ProductosService
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarProductos();
+  }
+
+  /**
+   * Cargar productos desde el backend
+   */
+  cargarProductos(): void {
+    this.loading = true;
+    this.error = '';
+
+    this.productosService.getAll().subscribe({
+      next: (response) => {
+        this.loading = false;
+        
+        if (response.tipo === 1 && response.data) {
+          this.productos = response.data.productos;
+        } else {
+          this.error = response.mensajes.join('. ');
+        }
+      },
+      error: (error) => {
+        this.loading = false;
+        
+        if (error.status === 401) {
+          this.error = 'No autorizado. Verifica el API Key.';
+        } else if (error.status === 0) {
+          this.error = 'No se puede conectar con el servidor.';
+        } else {
+          this.error = error.error?.mensajes?.join('. ') || 'Error al cargar productos.';
+        }
+        
+        console.error('Error cargando productos:', error);
+      }
+    });
+  }
 
   navegarNuevo() {
     this.router.navigate(['/productos/nuevo']);
@@ -64,4 +72,67 @@ export class Productos {
     this.router.navigate([`/productos/${id}/editar`]);
   }
 
+  /**
+   * Cambiar estado de producto (activar/desactivar)
+   */
+  cambiarEstado(producto: Producto): void {
+    const nuevoEstado = producto.productos_estado === 1 ? 0 : 1;
+    const accion = nuevoEstado === 1 ? 'activar' : 'desactivar';
+    
+    if (!confirm(`¿Está seguro de ${accion} el producto "${producto.productos_nombre}"?`)) {
+      return;
+    }
+
+    this.productosService.cambiarEstado(producto.productos_id, nuevoEstado).subscribe({
+      next: (response) => {
+        if (response.tipo === 1) {
+          // Actualizar estado en el array local
+          producto.productos_estado = nuevoEstado;
+          console.log(`Producto ${accion} exitosamente`);
+        } else {
+          alert('Error: ' + response.mensajes.join('. '));
+        }
+      },
+      error: (error) => {
+        alert('Error al cambiar estado: ' + (error.error?.mensajes?.join('. ') || 'Error desconocido'));
+        console.error('Error cambiando estado:', error);
+      }
+    });
+  }
+
+  /**
+   * Obtener clase CSS para el badge de estado
+   */
+  getEstadoClass(estado: number): string {
+    return estado === 1 ? 'estado-activo' : 'estado-inactivo';
+  }
+
+  /**
+   * Obtener texto del estado
+   */
+  getEstadoTexto(estado: number): string {
+    return estado === 1 ? 'ACTIVO' : 'INACTIVO';
+  }
+
+  /**
+   * Formatear precio
+   */
+  formatearPrecio(precio: string | null): string {
+    if (!precio) return 'N/A';
+    return `S/ ${parseFloat(precio).toFixed(2)}`;
+  }
+
+  /**
+   * Formatear stock
+   */
+  formatearStock(stock: string): string {
+    return parseFloat(stock).toFixed(3);
+  }
+
+  /**
+   * Verificar si hay stock bajo (menos de 10)
+   */
+  isStockBajo(stock: string): boolean {
+    return parseFloat(stock) < 10;
+  }
 }

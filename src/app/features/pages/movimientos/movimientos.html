@@ -20,53 +20,89 @@
         </div>
 
         <div class="p-6 pt-0">
-            <div class="overflow-x-auto">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-current border-r-transparent text-primary"></div>
+                <p class="mt-4 text-muted-foreground">Cargando movimientos...</p>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="error && !loading" class="text-center py-12">
+                <div class="rounded-lg bg-destructive/10 border border-destructive/20 p-6 max-w-md mx-auto">
+                    <p class="text-destructive font-medium">{{ error }}</p>
+                    <button (click)="cargarMovimientos()" class="btn btn-outline mt-4">
+                        Reintentar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla de Movimientos -->
+            <div *ngIf="!loading && !error" class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="[&_tr]:border-b">
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                        <tr class="border-b transition-colors hover:bg-muted/50">
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">ID</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Producto</th>
-                            <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Usuario</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Tipo</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Cantidad</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Motivo</th>
+                            <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Comentario</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Fecha</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="[&_tr:last-child]:border-0">
-                        <tr *ngFor="let movimiento of mockMovimientos"
-                            class="border-b transition-colors hover:bg-slate-100/50">
-                            <td class="p-4 align-middle">{{ movimiento.id }}</td>
+                        <!-- Empty State -->
+                        <tr *ngIf="movimientos.length === 0">
+                            <td colspan="8" class="p-12 text-center text-muted-foreground">
+                                <p class="text-lg">No hay movimientos registrados</p>
+                                <button (click)="navegarNuevo()" class="btn btn-primary mt-4">
+                                    <lucide-icon [img]="icons.Plus" class="h-4 w-4 mr-2"></lucide-icon>
+                                    Registrar Primer Movimiento
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Movimientos Data -->
+                        <tr *ngFor="let movimiento of movimientos" class="border-b transition-colors hover:bg-slate-100/50">
+                            <td class="p-4 align-middle font-mono text-xs">{{ movimiento.movimientos_id }}</td>
 
                             <td class="p-4 align-middle">
                                 <div>
-                                    <p class="font-medium">{{ movimiento.producto.nombre }}</p>
-                                    <p class="text-sm text-slate-500">{{ movimiento.producto.codigo }}</p>
+                                    <p class="font-medium">{{ movimiento.productos_nombre }}</p>
+                                    <code class="text-xs text-slate-500">{{ movimiento.productos_codigo }}</code>
                                 </div>
                             </td>
-
-                            <td class="p-4 align-middle">{{ movimiento.usuario }}</td>
 
                             <td class="p-4 align-middle">
-                                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent text-white shadow hover:opacity-80"
-                                    [ngClass]="movimiento.tipo === 'ENTRADA' ? 'bg-slate-900' : 'bg-red-500'">
-                                    {{ movimiento.tipo }}
-                                </div>
+                                <span class="badge" [ngClass]="getTipoClass(movimiento.movimientos_tipo)">
+                                    {{ movimiento.movimientos_tipo }}
+                                </span>
                             </td>
 
-                            <td class="p-4 align-middle font-medium">{{ movimiento.cantidad }}</td>
-                            <td class="p-4 align-middle text-slate-500">{{ movimiento.motivo }}</td>
-                            <td class="p-4 align-middle">{{ movimiento.fecha }}</td>
+                            <td class="p-4 align-middle font-medium">{{ formatearCantidad(movimiento.movimientos_cantidad) }}</td>
+                            
+                            <td class="p-4 align-middle text-slate-600">{{ movimiento.movimientos_motivo }}</td>
+                            
+                            <td class="p-4 align-middle text-xs text-slate-500">
+                                <span *ngIf="movimiento.movimientos_comentario">{{ movimiento.movimientos_comentario }}</span>
+                                <span *ngIf="!movimiento.movimientos_comentario" class="text-slate-400">-</span>
+                            </td>
+
+                            <td class="p-4 align-middle text-xs text-slate-500">
+                                {{ formatearFecha(movimiento.movimientos_fecha) }}
+                            </td>
 
                             <td class="p-4 align-middle">
                                 <div class="flex gap-2">
-                                    <button (click)="verMovimiento(movimiento.id)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8">
+                                    <button (click)="verMovimiento(movimiento.movimientos_id)"
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
+                                        title="Ver detalles">
                                         <lucide-icon [img]="icons.Eye" class="h-4 w-4"></lucide-icon>
                                     </button>
-                                    <button (click)="editarMovimiento(movimiento.id)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8">
+                                    <button (click)="editarMovimiento(movimiento.movimientos_id)"
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
+                                        title="Editar">
                                         <lucide-icon [img]="icons.Pencil" class="h-4 w-4"></lucide-icon>
                                     </button>
                                 </div>

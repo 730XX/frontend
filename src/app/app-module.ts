@@ -1,11 +1,13 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { providePrimeNG } from 'primeng/config';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { SharedModule } from './shared/shared-module';
 import { FeaturesModule } from './features/features-module';
+import Aura from '@primeuix/themes/aura';
 
 @NgModule({
   declarations: [
@@ -18,6 +20,11 @@ import { FeaturesModule } from './features/features-module';
     FeaturesModule
   ],
   providers: [
+    providePrimeNG({
+            theme: {
+                preset: Aura
+            }
+        }),
     provideBrowserGlobalErrorListeners(),
     provideHttpClient()
   ],

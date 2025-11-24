@@ -20,10 +20,27 @@
         </div>
 
         <div class="p-6 pt-0">
-            <div class="overflow-x-auto">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-current border-r-transparent text-primary"></div>
+                <p class="mt-4 text-muted-foreground">Cargando productos...</p>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="error && !loading" class="text-center py-12">
+                <div class="rounded-lg bg-destructive/10 border border-destructive/20 p-6 max-w-md mx-auto">
+                    <p class="text-destructive font-medium">{{ error }}</p>
+                    <button (click)="cargarProductos()" class="btn btn-outline mt-4">
+                        Reintentar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla de Productos -->
+            <div *ngIf="!loading && !error" class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="[&_tr]:border-b">
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                        <tr class="border-b transition-colors hover:bg-muted/50">
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">ID</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Nombre</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Código</th>
@@ -31,44 +48,66 @@
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Precio</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Stock</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Estado</th>
+                            <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Creado</th>
                             <th class="h-12 px-4 text-left align-middle font-medium text-slate-500">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="[&_tr:last-child]:border-0">
-                        <tr *ngFor="let producto of mockProductos"
-                            class="border-b transition-colors hover:bg-slate-100/50">
-                            <td class="p-4 align-middle">{{ producto.id }}</td>
-                            <td class="p-4 align-middle font-medium">{{ producto.nombre }}</td>
-                            <td class="p-4 align-middle text-slate-500">{{ producto.codigo }}</td>
-                            <td class="p-4 align-middle">{{ producto.unidad }}</td>
-                            <td class="p-4 align-middle">${{ producto.precio.toFixed(2) }}</td>
+                        <!-- Empty State -->
+                        <tr *ngIf="productos.length === 0">
+                            <td colspan="9" class="p-12 text-center text-muted-foreground">
+                                <p class="text-lg">No hay productos registrados</p>
+                                <button (click)="navegarNuevo()" class="btn btn-primary mt-4">
+                                    <lucide-icon [img]="icons.Plus" class="h-4 w-4 mr-2"></lucide-icon>
+                                    Crear Primer Producto
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Productos Data -->
+                        <tr *ngFor="let producto of productos" class="border-b transition-colors hover:bg-slate-100/50">
+                            <td class="p-4 align-middle font-mono text-xs">{{ producto.productos_id }}</td>
+                            <td class="p-4 align-middle font-medium">{{ producto.productos_nombre }}</td>
+                            <td class="p-4 align-middle">
+                                <code class="px-2 py-1 bg-muted rounded text-xs">{{ producto.productos_codigo }}</code>
+                            </td>
+                            <td class="p-4 align-middle">
+                                <span class="badge badge-secondary">{{ producto.productos_unidad }}</span>
+                            </td>
+                            <td class="p-4 align-middle font-medium">{{ formatearPrecio(producto.productos_precio) }}</td>
 
                             <td class="p-4 align-middle">
-                                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent text-white shadow hover:opacity-80"
-                                    [ngClass]="producto.stock > 0 ? 'bg-slate-900' : 'bg-red-500'">
-                                    {{ producto.stock }}
-                                </div>
+                                <span class="badge" 
+                                    [ngClass]="isStockBajo(producto.productos_stock) ? 'badge-warning' : 'badge-success'">
+                                    {{ formatearStock(producto.productos_stock) }}
+                                </span>
                             </td>
 
                             <td class="p-4 align-middle">
-                                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                    [ngClass]="producto.estado === 'ACTIVO' ? 'border-transparent bg-slate-900 text-white hover:bg-slate-900/80' : 'border-transparent bg-slate-100 text-slate-900 hover:bg-slate-100/80'">
-                                    {{ producto.estado }}
-                                </div>
+                                <span class="badge" [ngClass]="getEstadoClass(producto.productos_estado)">
+                                    {{ getEstadoTexto(producto.productos_estado) }}
+                                </span>
+                            </td>
+
+                            <td class="p-4 align-middle text-xs text-slate-500">
+                                {{ producto.productos_creado }}
                             </td>
 
                             <td class="p-4 align-middle">
                                 <div class="flex gap-2">
-                                    <button (click)="verProducto(producto.id)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8">
+                                    <button (click)="verProducto(producto.productos_id)"
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
+                                        title="Ver detalles">
                                         <lucide-icon [img]="icons.Eye" class="h-4 w-4"></lucide-icon>
                                     </button>
-                                    <button (click)="editarProducto(producto.id)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8">
+                                    <button (click)="editarProducto(producto.productos_id)"
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
+                                        title="Editar">
                                         <lucide-icon [img]="icons.Pencil" class="h-4 w-4"></lucide-icon>
                                     </button>
-                                    <button
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8">
+                                    <button (click)="cambiarEstado(producto)"
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
+                                        [title]="producto.productos_estado === 1 ? 'Desactivar' : 'Activar'">
                                         <lucide-icon [img]="icons.X" class="h-4 w-4"></lucide-icon>
                                     </button>
                                 </div>

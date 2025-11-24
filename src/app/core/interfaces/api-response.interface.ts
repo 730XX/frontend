@@ -14,12 +14,12 @@ export interface ApiResponse<T = any> {
 export interface Usuario {
   usuarios_id: number;
   usuarios_nombre: string;
-  usuarios_apellido: string;
+  usuarios_apellido?: string;
   usuarios_correo: string;
   usuarios_rol: 'ADMIN' | 'CAJERO' | 'ALMACENERO';
   usuarios_estado: number;
-  usuarios_creado_en: string;
-  usuarios_actualizado_en: string;
+  usuarios_creado?: string; // Fecha de creación
+  usuarios_actualizado?: string; // Fecha de actualización
 }
 
 /**
@@ -70,4 +70,87 @@ export interface UsuarioFormData {
   usuarios_correo: string;
   usuarios_password?: string;
   usuarios_rol: 'ADMIN' | 'CAJERO' | 'ALMACENERO';
+}
+
+/**
+ * Datos del producto
+ */
+export interface Producto {
+  productos_id: number;
+  productos_nombre: string;
+  productos_codigo: string;
+  productos_unidad: string;
+  productos_precio: string | null;
+  productos_stock: string;
+  productos_estado: number;
+  productos_creado?: string;
+  productos_actualizado?: string;
+}
+
+/**
+ * Respuesta de listado de productos
+ */
+export interface ProductosListResponse {
+  productos: Producto[];
+  total: number;
+}
+
+/**
+ * Respuesta de un solo producto
+ */
+export interface ProductoResponse {
+  producto: Producto;
+}
+
+/**
+ * Datos para crear/actualizar producto
+ */
+export interface ProductoFormData {
+  productos_nombre: string;
+  productos_codigo: string;
+  productos_unidad: string;
+  productos_precio?: number | null;
+  productos_stock?: number;
+}
+
+/**
+ * Datos del movimiento (kardex)
+ */
+export interface Movimiento {
+  movimientos_id: number;
+  productos_id: number;
+  usuarios_id: number;
+  movimientos_tipo: 'ENTRADA' | 'SALIDA';
+  movimientos_cantidad: string;
+  movimientos_motivo: string;
+  movimientos_comentario: string | null;
+  movimientos_fecha: string;
+  productos_nombre: string;
+  productos_codigo: string;
+}
+
+/**
+ * Respuesta de listado de movimientos
+ */
+export interface MovimientosListResponse {
+  movimientos: Movimiento[];
+  total: number;
+}
+
+/**
+ * Respuesta de un solo movimiento
+ */
+export interface MovimientoResponse {
+  movimiento: Movimiento;
+}
+
+/**
+ * Datos para crear movimiento
+ */
+export interface MovimientoFormData {
+  productos_id: number;
+  movimientos_tipo: 'ENTRADA' | 'SALIDA';
+  movimientos_cantidad: number;
+  movimientos_motivo: string;
+  movimientos_comentario?: string;
 }
