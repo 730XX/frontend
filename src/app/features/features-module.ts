@@ -7,6 +7,7 @@ import { Productos } from './pages/productos/productos';
 import { Movimientos } from './pages/movimientos/movimientos';
 import { Login } from './pages/login/login';
 import { SharedModule } from '../shared/shared-module';
+import { Ventas } from './pages/ventas/ventas';
 
 
 
@@ -15,7 +16,8 @@ import { SharedModule } from '../shared/shared-module';
     Usuarios,
     Productos,
     Movimientos,
-    Login
+    Login,
+    Ventas
   ],
   imports: [
     CommonModule,

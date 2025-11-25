@@ -1,0 +1,212 @@
+<p-toast />
+
+<div class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900">Punto de Venta</h1>
+            <p class="text-slate-500">Registra ventas de productos</p>
+        </div>
+    </div>
+
+    <!-- Layout Principal -->
+    <div class="flex gap-6">
+        
+        <!-- Sección de Productos -->
+        <div class="flex-[65] rounded-lg border bg-white text-slate-950 shadow-sm overflow-hidden flex flex-col">
+            <div class="flex flex-col space-y-1.5 p-6 border-b border-slate-200">
+                <h3 class="text-2xl font-semibold leading-none tracking-tight">Productos Disponibles</h3>
+                <p class="text-sm text-slate-500">Selecciona los productos para agregar al carrito</p>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6">
+                <!-- Loading State -->
+                <div *ngIf="loading" class="text-center py-12">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-current border-r-transparent text-primary"></div>
+                    <p class="mt-4 text-slate-500">Cargando productos...</p>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error && !loading" class="text-center py-12">
+                    <div class="rounded-lg bg-red-50 border border-red-200 p-6 max-w-md mx-auto">
+                        <p class="text-red-600 font-medium">{{ error }}</p>
+                        <button (click)="cargarProductos()" 
+                            class="mt-4 inline-flex items-center justify-center rounded-md text-sm font-medium bg-slate-900 text-white hover:bg-slate-900/90 h-10 px-4 py-2">
+                            Reintentar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grid de Productos -->
+                <div *ngIf="!loading && !error" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+                    <div *ngFor="let producto of productos"
+                        class="group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-all hover:shadow-md cursor-pointer"
+                        [ngClass]="{
+                'opacity-50 cursor-not-allowed': getStock(producto) === 0,
+                'hover:border-slate-400': getStock(producto) > 0
+              }" (click)="getStock(producto) > 0 && agregarProducto(producto)">
+                        
+                        <div class="p-4 space-y-3">
+                            <!-- Nombre del Producto -->
+                            <div class="min-h-[3rem]">
+                                <h3 class="font-semibold text-slate-900 text-sm leading-tight line-clamp-2">
+                                    {{ producto.productos_nombre }}
+                                </h3>
+                            </div>
+
+                            <!-- Precio -->
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-xs text-slate-500">S/</span>
+                                <span class="text-2xl font-bold text-slate-900">
+                                    {{ getPrecio(producto).toFixed(2) }}
+                                </span>
+                            </div>
+
+                            <!-- Stock Badge -->
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-500">Stock:</span>
+                                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors"
+                                    [ngClass]="{
+                      'bg-red-500 text-white border-red-500': getStock(producto) === 0,
+                      'bg-yellow-50 text-yellow-700 border-yellow-200': getStock(producto) > 0 && getStock(producto) < 5,
+                      'bg-green-50 text-green-700 border-green-200': getStock(producto) >= 5
+                    }">
+                                    {{ getStock(producto) }} und
+                                </div>
+                            </div>
+
+                            <!-- En Carrito Badge -->
+                            <div *ngIf="cantidadEnCarrito(producto.productos_id) > 0"
+                                class="flex items-center justify-center gap-1 bg-slate-900 text-white rounded-md py-1.5 px-3">
+                                <lucide-icon [img]="icons.ShoppingCart" class="h-3 w-3"></lucide-icon>
+                                <span class="text-xs font-semibold">
+                                    {{ cantidadEnCarrito(producto.productos_id) }} en carrito
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Overlay Sin Stock -->
+                        <div *ngIf="getStock(producto) === 0"
+                            class="absolute inset-0 bg-white/90 flex items-center justify-center backdrop-blur-sm">
+                            <div class="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
+                                AGOTADO
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carrito de Compras -->
+        <div class="flex-[35] rounded-lg border bg-white text-slate-950 shadow-sm flex flex-col max-h-[calc(100vh-8rem)]">
+
+            <!-- Header del Carrito -->
+            <div class="flex flex-col space-y-1.5 p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-none tracking-tight">Carrito de Venta</h3>
+                    <div class="inline-flex items-center rounded-full bg-slate-900 text-white px-3 py-1 text-xs font-mono font-semibold">
+                        #{{ currentDate.getTime().toString().slice(-6) }}
+                    </div>
+                </div>
+                <div class="flex justify-between text-sm text-slate-500 pt-1">
+                    <span>Cajero: Usuario #1</span>
+                    <span>{{ currentDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+            </div>
+
+            <!-- Lista de Items del Carrito (con scroll) -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-3 min-h-0">
+
+                <div *ngIf="carrito.length === 0" class="h-full flex flex-col items-center justify-center text-slate-400 py-12">
+                    <lucide-icon [img]="icons.ShoppingCart" class="w-16 h-16 mb-4 opacity-20"></lucide-icon>
+                    <p class="text-lg font-medium">Carrito vacío</p>
+                    <p class="text-sm">Selecciona productos para comenzar</p>
+                </div>
+
+                <div *ngFor="let item of carrito"
+                    class="rounded-lg border border-slate-200 bg-white shadow-sm p-4 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1 pr-2">
+                            <h4 class="font-semibold text-slate-900 text-sm line-clamp-2">{{ item.productos_nombre }}</h4>
+                            <p class="text-xs text-slate-500 mt-1">S/ {{ item.precio.toFixed(2) }} c/u</p>
+                        </div>
+                        <button
+                            class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-red-50 h-8 w-8 text-red-500 hover:text-red-600 flex-shrink-0"
+                            (click)="eliminarDelCarrito(item.productos_id)"
+                            title="Eliminar del carrito">
+                            <lucide-icon [img]="icons.Trash2" class="h-4 w-4"></lucide-icon>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2 bg-slate-100 rounded-lg p-1">
+                            <button
+                                class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-white hover:text-slate-900 h-7 w-7"
+                                (click)="decrementarCantidad(item.productos_id)">
+                                <lucide-icon [img]="icons.Minus" class="h-3 w-3"></lucide-icon>
+                            </button>
+                            <span class="w-10 text-center font-semibold text-sm">{{ item.cantidad }}</span>
+                            <button
+                                class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-white hover:text-slate-900 h-7 w-7"
+                                (click)="incrementarCantidad(item.productos_id)">
+                                <lucide-icon [img]="icons.Plus" class="h-3 w-3"></lucide-icon>
+                            </button>
+                        </div>
+
+                        <span class="text-lg font-bold text-slate-900">
+                            S/ {{ (item.precio * item.cantidad).toFixed(2) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Fijo: Totales y Botón -->
+            <div class="border-t border-slate-200 bg-slate-50/50 p-6 space-y-4 flex-shrink-0">
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm text-slate-600">
+                        <span>Subtotal:</span>
+                        <span class="font-medium">S/ {{ subtotal.toFixed(2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-slate-600">
+                        <span>IGV (18%):</span>
+                        <span class="font-medium">S/ {{ igv.toFixed(2) }}</span>
+                    </div>
+
+                    <div class="shrink-0 bg-slate-200 h-[1px] w-full my-2"></div>
+
+                    <div class="flex justify-between items-center pt-1">
+                        <span class="text-xl font-bold text-slate-900">TOTAL:</span>
+                        <span class="text-3xl font-bold text-slate-900">
+                            S/ {{ total.toFixed(2) }}
+                        </span>
+                    </div>
+                </div>
+
+                <button
+                    class="inline-flex items-center justify-center rounded-md text-base font-bold transition-colors disabled:pointer-events-none disabled:opacity-50 w-full h-12 bg-emerald-600 text-white hover:bg-emerald-700 shadow-md hover:shadow-lg"
+                    [disabled]="carrito.length === 0 || loading" (click)="confirmarVenta()">
+                    <span *ngIf="loading" class="flex items-center gap-2">
+                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        Procesando...
+                    </span>
+
+                    <span *ngIf="!loading" class="flex items-center gap-2">
+                        <lucide-icon [img]="icons.CheckCircle" class="h-5 w-5"></lucide-icon>
+                        CONFIRMAR VENTA
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

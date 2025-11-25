@@ -184,11 +184,7 @@ export class Productos implements OnInit {
    */
   cambiarEstado(producto: Producto): void {
     const nuevoEstado = producto.productos_estado === 1 ? 0 : 1;
-    const accion = nuevoEstado === 1 ? 'activar' : 'desactivar';
-    
-    if (!confirm(`¿Está seguro de ${accion} el producto "${producto.productos_nombre}"?`)) {
-      return;
-    }
+    const accion = nuevoEstado === 1 ? 'activado' : 'desactivado';
 
     this.productosService.cambiarEstado(producto.productos_id, nuevoEstado).subscribe({
       next: (response) => {

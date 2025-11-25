@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LucideAngularModule, Package, TrendingUp, Users } from 'lucide-angular';
+import { LucideAngularModule, Package, TrendingUp, Users, LogOut } from 'lucide-angular';
 import { Sidebar } from './sidebar/sidebar';
 import { RouterLink } from '@angular/router';
 import { ProductosModal } from './productos-modal/productos-modal';
@@ -15,18 +15,20 @@ import { InputText } from 'primeng/inputtext';
 import { InputNumber } from 'primeng/inputnumber';
 import { Select } from 'primeng/select';
 import { Toast } from 'primeng/toast';
+import { MovimientosDetalleModal } from './movimientos-detalle-modal/movimientos-detalle-modal';
 
 @NgModule({
   declarations: [
     Sidebar,
     ProductosModal,
     ProductoDetalleModal,
-    AgregarProductosModal
+    AgregarProductosModal,
+    MovimientosDetalleModal
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    LucideAngularModule.pick({ Package, TrendingUp, Users }),
+    LucideAngularModule.pick({ Package, TrendingUp, Users, LogOut }),
     RouterLink,
     Dialog,
     Button,
@@ -40,7 +42,8 @@ import { Toast } from 'primeng/toast';
     ProductosModal,
     ProductoDetalleModal,
     AgregarProductosModal,
-    Toast
+    Toast,
+    MovimientosDetalleModal
   ]
 })
 export class SharedModule { }

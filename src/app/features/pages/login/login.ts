@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Eye, EyeOff, Package, Lock, Mail } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -9,7 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class Login {
+export class Login implements OnInit {
   readonly icons = { Eye, EyeOff, Package, Lock, Mail };
 
   // Datos del formulario
@@ -21,11 +21,20 @@ export class Login {
   // Estados
   loading: boolean = false;
   error: string = '';
+  
+  // URL de retorno después del login
+  private returnUrl: string = '/productos';
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private authService: AuthService
   ) {}
+
+  ngOnInit(): void {
+    // Obtener la URL de retorno desde los query params
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/productos';
+  }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -58,8 +67,8 @@ export class Login {
         
         // Verificar si el login fue exitoso
         if (response.tipo === 1) {
-          // Redirigir a productos
-          this.router.navigate(['/productos']);
+          // Redirigir a la URL de retorno o a productos por defecto
+          this.router.navigateByUrl(this.returnUrl);
         } else {
           // Mostrar mensajes de error del backend
           this.error = response.mensajes.join('. ');

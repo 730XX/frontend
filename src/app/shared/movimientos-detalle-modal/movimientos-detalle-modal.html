@@ -1,0 +1,114 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '650px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onHide()"
+  header="Detalles del Movimiento"
+>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-current border-r-transparent text-primary"></div>
+    <p class="mt-4 text-muted-foreground">Cargando detalles...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="text-center py-8">
+    <div class="rounded-lg bg-destructive/10 border border-destructive/20 p-6">
+      <p class="text-destructive font-medium">{{ error }}</p>
+      <button (click)="cargarMovimiento()" class="btn btn-outline mt-4">
+        Reintentar
+      </button>
+    </div>
+  </div>
+
+  <!-- Detalles del Movimiento -->
+  <div *ngIf="movimiento && !loading && !error" class="movimiento-detalle">
+    <!-- Header con tipo y ID -->
+    <div class="detalle-header">
+      <div class="header-info">
+        <div class="tipo-badge-large" [ngClass]="getTipoBadge(movimiento.movimientos_tipo).class">
+          <span class="tipo-icon">{{ getTipoBadge(movimiento.movimientos_tipo).icon }}</span>
+          <span class="tipo-text">{{ getTipoBadge(movimiento.movimientos_tipo).text }}</span>
+        </div>
+        <span class="movimiento-id">ID: #{{ movimiento.movimientos_id }}</span>
+      </div>
+    </div>
+
+    <!-- Grid de información principal -->
+    <div class="detalle-grid">
+      <!-- Producto -->
+      <div class="detalle-section">
+        <h4 class="section-title">Producto</h4>
+        <div class="producto-info">
+          <div class="producto-nombre">{{ movimiento.productos_nombre }}</div>
+          <code class="producto-codigo">{{ movimiento.productos_codigo }}</code>
+          <span class="badge badge-secondary">{{ movimiento.productos_unidad }}</span>
+        </div>
+      </div>
+
+      <!-- Usuario -->
+      <div class="detalle-section">
+        <h4 class="section-title">Usuario</h4>
+        <div class="usuario-info">
+          <div class="usuario-nombre">{{ movimiento.usuarios_nombre }}</div>
+          <span class="usuario-id">ID: {{ movimiento.usuarios_id }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalles de la operación -->
+    <div class="operacion-grid">
+      <!-- Cantidad -->
+      <div class="detalle-item">
+        <span class="detalle-label">Cantidad</span>
+        <span class="detalle-value cantidad">
+          {{ formatearCantidad(movimiento.movimientos_cantidad) }} {{ movimiento.productos_unidad }}
+        </span>
+      </div>
+
+      <!-- Stock Histórico -->
+      <div class="detalle-item">
+        <span class="detalle-label">Stock Previo</span>
+        <span class="detalle-value stock">
+          {{ formatearCantidad(movimiento.movimientos_stock_historico) }} {{ movimiento.productos_unidad }}
+        </span>
+      </div>
+
+      <!-- Fecha -->
+      <div class="detalle-item full-width">
+        <span class="detalle-label">Fecha y Hora</span>
+        <span class="detalle-value fecha">{{ formatearFecha(movimiento.movimientos_fecha) }}</span>
+      </div>
+    </div>
+
+    <!-- Motivo y Comentario -->
+    <div class="detalle-observaciones">
+      <div class="observacion-item">
+        <span class="observacion-label">Motivo</span>
+        <p class="observacion-text">{{ movimiento.movimientos_motivo }}</p>
+      </div>
+
+      <div class="observacion-item" *ngIf="movimiento.movimientos_comentario">
+        <span class="observacion-label">Comentario</span>
+        <p class="observacion-text">{{ movimiento.movimientos_comentario }}</p>
+      </div>
+
+      <div class="observacion-item" *ngIf="!movimiento.movimientos_comentario">
+        <span class="observacion-label">Comentario</span>
+        <p class="observacion-text text-muted">Sin comentarios</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onHide()"
+    >
+      Cerrar
+    </button>
+  </div>
+</p-dialog>

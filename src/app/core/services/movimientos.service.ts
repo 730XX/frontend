@@ -6,7 +6,7 @@ import {
   ApiResponse,
   Movimiento,
   MovimientosListResponse,
-  MovimientoResponse,
+  MovimientoDetalleResponse,
   MovimientoFormData
 } from '../interfaces/api-response.interface';
 import { environment } from '../../../environments/environment';
@@ -57,10 +57,10 @@ export class MovimientosService {
    * GET: Obtener movimiento por ID
    * Endpoint: GET /kardex/:id
    */
-  getById(id: number): Observable<ApiResponse<MovimientoResponse>> {
+  getById(id: number): Observable<ApiResponse<MovimientoDetalleResponse>> {
     const url = `${this.API_BASE_URL}/kardex/${id}`;
     
-    return this.http.get<ApiResponse<MovimientoResponse>>(
+    return this.http.get<ApiResponse<MovimientoDetalleResponse>>(
       url,
       { headers: this.getHeaders() }
     ).pipe(

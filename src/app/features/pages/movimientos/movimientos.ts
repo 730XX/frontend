@@ -18,6 +18,10 @@ export class Movimientos implements OnInit {
   loading: boolean = false;
   error: string = '';
 
+  // Modal de detalles
+  detalleModalVisible: boolean = false;
+  movimientoIdDetalle: number | null = null;
+
   constructor(
     private router: Router,
     private movimientosService: MovimientosService
@@ -65,7 +69,8 @@ export class Movimientos implements OnInit {
   }
 
   verMovimiento(id: number) {
-    this.router.navigate([`/movimientos/${id}`]);
+    this.movimientoIdDetalle = id;
+    this.detalleModalVisible = true;
   }
 
   editarMovimiento(id: number) {

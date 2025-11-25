@@ -130,6 +130,25 @@ export interface Movimiento {
 }
 
 /**
+ * Detalle completo del movimiento (kardex)
+ */
+export interface MovimientoDetalle {
+  movimientos_id: number;
+  movimientos_fecha: string;
+  productos_id: number;
+  productos_nombre: string;
+  productos_codigo: string;
+  productos_unidad: string;
+  usuarios_id: number;
+  usuarios_nombre: string;
+  movimientos_tipo: 'ENTRADA' | 'SALIDA';
+  movimientos_cantidad: string;
+  movimientos_stock_historico: string;
+  movimientos_motivo: string;
+  movimientos_comentario: string | null;
+}
+
+/**
  * Respuesta de listado de movimientos
  */
 export interface MovimientosListResponse {
@@ -138,10 +157,22 @@ export interface MovimientosListResponse {
 }
 
 /**
- * Respuesta de un solo movimiento
+ * Respuesta de un solo movimiento con detalle
  */
-export interface MovimientoResponse {
-  movimiento: Movimiento;
+export interface MovimientoDetalleResponse {
+  movimientos_id: number;
+  movimientos_fecha: string;
+  productos_id: number;
+  productos_nombre: string;
+  productos_codigo: string;
+  productos_unidad: string;
+  usuarios_id: number;
+  usuarios_nombre: string;
+  movimientos_tipo: 'ENTRADA' | 'SALIDA';
+  movimientos_cantidad: string;
+  movimientos_stock_historico: string;
+  movimientos_motivo: string;
+  movimientos_comentario: string | null;
 }
 
 /**
@@ -153,4 +184,31 @@ export interface MovimientoFormData {
   movimientos_cantidad: number;
   movimientos_motivo: string;
   movimientos_comentario?: string;
+}
+
+/**
+ * Item de venta
+ */
+export interface VentaItem {
+  productos_id: number;
+  cantidad: number;
+  precio: number;
+}
+
+/**
+ * Datos para crear una venta
+ */
+export interface VentaRequest {
+  items: VentaItem[];
+  cliente_nombre?: string;
+  observaciones?: string;
+}
+
+/**
+ * Respuesta al crear una venta
+ */
+export interface VentaResponse {
+  venta_id: string;
+  mensaje: string;
+  timestamp: string;
 }

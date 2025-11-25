@@ -20,7 +20,10 @@ export class ProductoDetalleModal implements OnChanges {
   constructor(private productosService: ProductosService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    // Cargar cuando cambia el productoId o cuando la modal se abre (visible pasa a true)
     if (changes['productoId'] && this.productoId && this.visible) {
+      this.cargarProducto();
+    } else if (changes['visible'] && this.visible && this.productoId) {
       this.cargarProducto();
     }
   }

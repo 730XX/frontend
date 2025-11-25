@@ -38,8 +38,36 @@
             </ul>
         </nav>
 
-        <!-- Footer (opcional) -->
-        <div class="p-4 border-t border-sidebar" *ngIf="!collapsed">
+        <!-- User Info & Logout -->
+        <div class="p-3 border-t border-sidebar">
+            <div *ngIf="!collapsed && currentUser" class="mb-2 px-2">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                        {{ getUserInitials() }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-sidebar-foreground truncate">
+                            {{ currentUser.usuarios_nombre }}
+                        </p>
+                        <p class="text-xs text-muted-foreground truncate">
+                            {{ currentUser.usuarios_rol }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <button
+                (click)="logout()"
+                class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-red-400 hover:text-white rounded-md transition-all duration-200 text-sidebar-foreground group cursor-pointer">
+                <lucide-icon [img]="icons.LogOut" class="h-5 w-5 flex-shrink-0"></lucide-icon>
+                <span *ngIf="!collapsed" class="overflow-hidden whitespace-nowrap text-sm font-medium">
+                    Cerrar Sesión
+                </span>
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-3 border-t border-sidebar" *ngIf="!collapsed">
             <div class="text-xs text-muted-foreground text-center">
                 © 2025 Sistema Inventario
             </div>

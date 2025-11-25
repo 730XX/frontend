@@ -52,7 +52,6 @@
                         </tr>
                     </thead>
                     <tbody class="[&_tr:last-child]:border-0">
-                        <!-- Empty State -->
                         <tr *ngIf="movimientos.length === 0">
                             <td colspan="8" class="p-12 text-center text-muted-foreground">
                                 <p class="text-lg">No hay movimientos registrados</p>
@@ -109,3 +108,9 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de detalles -->
+<app-movimientos-detalle-modal
+  [(visible)]="detalleModalVisible"
+  [movimientoId]="movimientoIdDetalle">
+</app-movimientos-detalle-modal>
