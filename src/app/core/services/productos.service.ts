@@ -43,7 +43,7 @@ export class ProductosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log(`✅ Productos obtenidos: ${response.data?.total || 0}`);
+         
         }
       }),
       catchError(error => {
@@ -85,7 +85,7 @@ export class ProductosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log('✅ Producto creado exitosamente');
+         
         }
       }),
       catchError(error => {
@@ -109,7 +109,7 @@ export class ProductosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log(`✅ Producto ${id} actualizado exitosamente`);
+         
         }
       }),
       catchError(error => {
@@ -133,7 +133,7 @@ export class ProductosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log(`✅ Estado de producto ${id} cambiado a ${estado === 1 ? 'ACTIVO' : 'INACTIVO'}`);
+         
         }
       }),
       catchError(error => {

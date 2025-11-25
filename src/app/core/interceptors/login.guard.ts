@@ -31,7 +31,7 @@ export class LoginGuard implements CanActivate {
     
     // Si el usuario YA está autenticado, redirigir a index
     if (this.authService.hasValidSession()) {
-      console.log('✅ Usuario ya autenticado. Redirigiendo a dashboard...');
+      
       return this.router.createUrlTree(['/index']);
     }
 

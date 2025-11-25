@@ -43,7 +43,7 @@ export class UsuariosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log(`✅ Usuarios obtenidos: ${response.data?.usuarios.length || 0}`);
+        
         }
       }),
       catchError(error => {
@@ -85,7 +85,7 @@ export class UsuariosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log('✅ Usuario creado exitosamente');
+          
         }
       }),
       catchError(error => {
@@ -109,7 +109,7 @@ export class UsuariosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log(`✅ Usuario ${id} actualizado exitosamente`);
+          
         }
       }),
       catchError(error => {
@@ -133,7 +133,7 @@ export class UsuariosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log(`✅ Estado de usuario ${id} cambiado a ${estado === 1 ? 'ACTIVO' : 'INACTIVO'}`);
+         
         }
       }),
       catchError(error => {

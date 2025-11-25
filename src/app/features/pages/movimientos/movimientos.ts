@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Eye, Pencil, Plus } from 'lucide-angular';
 import { MovimientosService } from '../../../core/services/movimientos.service';
+import { ReportesService } from '../../../core/services/reportes.service';
 import { Movimiento } from '../../../core/interfaces/api-response.interface';
 
 @Component({
@@ -17,6 +18,7 @@ export class Movimientos implements OnInit {
   movimientos: Movimiento[] = [];
   loading: boolean = false;
   error: string = '';
+  descargando: boolean = false;
 
   // Modal de detalles
   detalleModalVisible: boolean = false;
@@ -24,7 +26,8 @@ export class Movimientos implements OnInit {
 
   constructor(
     private router: Router,
-    private movimientosService: MovimientosService
+    private movimientosService: MovimientosService,
+    private reportesService: ReportesService
   ) {}
 
   ngOnInit(): void {
@@ -85,10 +88,10 @@ export class Movimientos implements OnInit {
   }
 
   /**
-   * Formatear cantidad
+   * Formatear cantidad - mostrar como número entero sin decimales
    */
   formatearCantidad(cantidad: string): string {
-    return parseFloat(cantidad).toFixed(3);
+    return Math.round(parseFloat(cantidad)).toString();
   }
 
   /**
@@ -102,6 +105,27 @@ export class Movimientos implements OnInit {
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit'
+    });
+  }
+
+  /**
+   * Descargar reporte de movimientos en Excel
+   */
+  descargarReporte(): void {
+    this.descargando = true;
+
+    this.reportesService.descargarMovimientos().subscribe({
+      next: (blob) => {
+        const filename = `movimientos_${new Date().toISOString().split('T')[0]}.xlsx`;
+        this.reportesService.iniciarDescarga(blob, filename);
+        this.descargando = false;
+       
+      },
+      error: (error) => {
+        this.descargando = false;
+        this.error = 'Error al descargar el reporte';
+        
+      }
     });
   }
 }

@@ -43,7 +43,7 @@ export class MovimientosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log(`✅ Movimientos obtenidos: ${response.data?.total || 0}`);
+         
         }
       }),
       catchError(error => {
@@ -85,7 +85,7 @@ export class MovimientosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log('✅ Movimiento creado exitosamente');
+          
         }
       }),
       catchError(error => {
@@ -109,7 +109,7 @@ export class MovimientosService {
     ).pipe(
       tap(response => {
         if (response.tipo === 1) {
-          console.log(`✅ Movimiento ${id} actualizado exitosamente`);
+          
         }
       }),
       catchError(error => {

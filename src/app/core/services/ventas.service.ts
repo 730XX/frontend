@@ -42,11 +42,6 @@ export class VentasService {
       { headers: this.getHeaders() }
     ).pipe(
       tap(response => {
-        if (response.tipo === 1) {
-          console.log('✅ Venta creada:', response.data);
-        } else {
-          console.warn('⚠️ Error al crear venta:', response.mensajes);
-        }
       }),
       catchError(error => {
         console.error('❌ Error HTTP al crear venta:', error);
@@ -64,9 +59,6 @@ export class VentasService {
       { headers: this.getHeaders() }
     ).pipe(
       tap(response => {
-        if (response.tipo === 1) {
-          console.log('✅ Ventas obtenidas');
-        }
       }),
       catchError(error => {
         console.error('❌ Error HTTP al obtener ventas:', error);
@@ -84,9 +76,6 @@ export class VentasService {
       { headers: this.getHeaders() }
     ).pipe(
       tap(response => {
-        if (response.tipo === 1) {
-          console.log('✅ Venta obtenida:', response.data);
-        }
       }),
       catchError(error => {
         console.error('❌ Error HTTP al obtener venta:', error);

@@ -28,11 +28,29 @@ export class AgregarProductosModal implements OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.productoForm = this.fb.group({
-      productos_nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      productos_codigo: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      productos_nombre: ['', [
+        Validators.required, 
+        Validators.minLength(3), 
+        Validators.maxLength(100),
+        Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\-\.]+$/)
+      ]],
+      productos_codigo: ['', [
+        Validators.required, 
+        Validators.minLength(2), 
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Z0-9\-_]+$/)
+      ]],
       productos_unidad: ['', Validators.required],
-      productos_precio: [null, [Validators.min(0), Validators.max(999999.99)]],
-      productos_stock: [0, [Validators.required, Validators.min(0), Validators.max(999999.999)]]
+      productos_precio: [null, [
+        Validators.required,
+        Validators.min(0), 
+        Validators.max(999999.99)
+      ]],
+      productos_stock: [0, [
+        Validators.required, 
+        Validators.min(0), 
+        Validators.max(999999.999)
+      ]]
     });
   }
 
@@ -64,12 +82,13 @@ export class AgregarProductosModal implements OnChanges {
       return;
     }
 
+    // Sanitizar y preparar datos
     const formData: ProductoFormData = {
-      productos_nombre: this.productoForm.value.productos_nombre.trim(),
+      productos_nombre: this.sanitizeText(this.productoForm.value.productos_nombre),
       productos_codigo: this.productoForm.value.productos_codigo.trim().toUpperCase(),
       productos_unidad: this.productoForm.value.productos_unidad,
-      productos_precio: this.productoForm.value.productos_precio,
-      productos_stock: this.productoForm.value.productos_stock
+      productos_precio: parseFloat(this.productoForm.value.productos_precio),
+      productos_stock: parseFloat(this.productoForm.value.productos_stock)
     };
 
     this.guardar.emit(formData);
@@ -90,7 +109,20 @@ export class AgregarProductosModal implements OnChanges {
     if (field.errors['maxlength']) return `Máximo ${field.errors['maxlength'].requiredLength} caracteres`;
     if (field.errors['min']) return `El valor mínimo es ${field.errors['min'].min}`;
     if (field.errors['max']) return `El valor máximo es ${field.errors['max'].max}`;
+    if (field.errors['pattern']) {
+      if (fieldName === 'productos_nombre') return 'Solo letras, números, espacios, guiones y puntos';
+      if (fieldName === 'productos_codigo') return 'Solo letras mayúsculas, números, guiones y guiones bajos';
+    }
     
     return '';
+  }
+
+  /**
+   * Sanitizar texto eliminando caracteres peligrosos
+   */
+  private sanitizeText(text: string): string {
+    if (!text) return '';
+    // Trim y eliminar múltiples espacios
+    return text.trim().replace(/\s+/g, ' ');
   }
 }
