@@ -1,3 +1,6 @@
+<!-- Toast notifications -->
+<p-toast />
+
 <div class="space-y-6">
 
     <div class="flex items-center justify-between">
@@ -5,12 +8,6 @@
             <h1 class="text-3xl font-bold text-slate-900">Usuarios</h1>
             <p class="text-slate-500">Gestiona los usuarios del sistema</p>
         </div>
-
-        <button (click)="navegarNuevo()"
-            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-900/90 h-10 px-4 py-2 gap-2">
-            <lucide-icon [img]="icons.Plus" class="h-4 w-4"></lucide-icon>
-            Nuevo Usuario
-        </button>
     </div>
 
     <div class="rounded-lg border bg-white text-slate-950 shadow-sm">
@@ -87,22 +84,12 @@
 
                             <td class="p-4 align-middle">
                                 <div class="flex gap-2">
-                                    <button (click)="verUsuario(usuario.usuarios_id)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
-                                        title="Ver detalles">
-                                        <lucide-icon [img]="icons.Eye" class="h-4 w-4"></lucide-icon>
-                                    </button>
-
-                                    <button (click)="editarUsuario(usuario.usuarios_id)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
-                                        title="Editar">
-                                        <lucide-icon [img]="icons.Pencil" class="h-4 w-4"></lucide-icon>
-                                    </button>
-
                                     <button (click)="cambiarEstado(usuario)"
-                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-8 w-8"
-                                        [title]="usuario.usuarios_estado === 1 ? 'Desactivar' : 'Activar'">
-                                        <lucide-icon [img]="icons.X" class="h-4 w-4"></lucide-icon>
+                                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-8 w-8"
+                                        [ngClass]="usuario.usuarios_estado === 1 ? 'hover:bg-red-50 hover:text-red-600' : 'hover:bg-green-50 hover:text-green-600'"
+                                        [title]="usuario.usuarios_estado === 1 ? 'Desactivar' : 'Activar'">  
+                                        <lucide-icon *ngIf="usuario.usuarios_estado === 1" [img]="icons.X" class="h-4 w-4"></lucide-icon>
+                                        <lucide-icon *ngIf="usuario.usuarios_estado === 0" [img]="icons.Check" class="h-4 w-4"></lucide-icon>
                                     </button>
                                 </div>
                             </td>

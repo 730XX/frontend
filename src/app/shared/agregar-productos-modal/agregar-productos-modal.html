@@ -1,0 +1,143 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '550px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onHide()"
+  header="Crear Nuevo Producto"
+>
+  <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="producto-form">
+    <!-- Nombre del Producto -->
+    <div class="field">
+      <label for="nombre" class="form-label">
+        Nombre del Producto <span class="text-destructive">*</span>
+      </label>
+      <input
+        pInputText
+        id="nombre"
+        formControlName="productos_nombre"
+        placeholder="Ej: Arroz Blanco"
+        class="w-full"
+        [class.p-invalid]="isFieldInvalid('productos_nombre')"
+        maxlength="100"
+      />
+      <small class="p-error" *ngIf="isFieldInvalid('productos_nombre')">
+        {{ getErrorMessage('productos_nombre') }}
+      </small>
+      <small class="field-hint">Ingresa un nombre descriptivo del producto</small>
+    </div>
+
+    <!-- Código del Producto -->
+    <div class="field">
+      <label for="codigo" class="form-label">
+        Código del Producto <span class="text-destructive">*</span>
+      </label>
+      <input
+        pInputText
+        id="codigo"
+        formControlName="productos_codigo"
+        placeholder="Ej: ARR001"
+        class="w-full"
+        [class.p-invalid]="isFieldInvalid('productos_codigo')"
+        maxlength="50"
+      />
+      <small class="p-error" *ngIf="isFieldInvalid('productos_codigo')">
+        {{ getErrorMessage('productos_codigo') }}
+      </small>
+      <small class="field-hint">Código único para identificar el producto</small>
+    </div>
+
+    <!-- Unidad de Medida -->
+    <div class="field">
+      <label for="unidad" class="form-label">
+        Unidad de Medida <span class="text-destructive">*</span>
+      </label>
+      <p-select
+        id="unidad"
+        formControlName="productos_unidad"
+        [options]="unidades"
+        placeholder="Selecciona una unidad"
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '100%' }"
+        [class.p-invalid]="isFieldInvalid('productos_unidad')"
+      />
+      <small class="p-error" *ngIf="isFieldInvalid('productos_unidad')">
+        {{ getErrorMessage('productos_unidad') }}
+      </small>
+      <small class="field-hint">Unidad en la que se mide el producto</small>
+    </div>
+
+    <!-- Grid de 2 columnas para Precio y Stock -->
+    <div class="field-grid">
+      <!-- Precio -->
+      <div class="field">
+        <label for="precio" class="form-label">Precio Unitario (S/)</label>
+        <p-inputNumber
+          id="precio"
+          formControlName="productos_precio"
+          mode="currency"
+          currency="PEN"
+          locale="es-PE"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          [min]="0"
+          [max]="999999.99"
+          placeholder="0.00"
+          [style]="{ width: '100%' }"
+          [class.p-invalid]="isFieldInvalid('productos_precio')"
+        ></p-inputNumber>
+        <small class="p-error" *ngIf="isFieldInvalid('productos_precio')">
+          {{ getErrorMessage('productos_precio') }}
+        </small>
+      </div>
+
+      <!-- Stock Inicial -->
+      <div class="field">
+        <label for="stock" class="form-label">
+          Stock Inicial <span class="text-destructive">*</span>
+        </label>
+        <p-inputNumber
+          id="stock"
+          formControlName="productos_stock"
+          [minFractionDigits]="0"
+          [maxFractionDigits]="0"
+          [min]="0"
+          [max]="999999"
+          placeholder="0"
+          [style]="{ width: '100%' }"
+          [class.p-invalid]="isFieldInvalid('productos_stock')"
+        ></p-inputNumber>
+        <small class="p-error" *ngIf="isFieldInvalid('productos_stock')">
+          {{ getErrorMessage('productos_stock') }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Mensaje de ayuda general -->
+    <div class="form-info">
+      <span class="info-icon">ℹ️</span>
+      <span class="info-text">Los campos marcados con <span class="text-destructive">*</span> son obligatorios</span>
+    </div>
+  </form>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline"
+      (click)="onHide()"
+    >
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onSubmit()"
+      [disabled]="productoForm.invalid || loading"
+    >
+      <span *ngIf="loading" class="spinner"></span>
+      {{ loading ? 'Creando...' : 'Crear Producto' }}
+    </button>
+  </div>
+</p-dialog>

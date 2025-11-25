@@ -1,0 +1,106 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onHide()"
+  header="Detalles del Producto"
+>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-current border-r-transparent text-primary"></div>
+    <p class="mt-4 text-muted-foreground">Cargando detalles...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="text-center py-8">
+    <div class="rounded-lg bg-destructive/10 border border-destructive/20 p-6">
+      <p class="text-destructive font-medium">{{ error }}</p>
+      <button (click)="cargarProducto()" class="btn btn-outline mt-4">
+        Reintentar
+      </button>
+    </div>
+  </div>
+
+  <!-- Detalles del Producto -->
+  <div *ngIf="producto && !loading && !error" class="producto-detalle">
+    <!-- Header con nombre y código -->
+    <div class="detalle-header">
+      <div>
+        <h3 class="producto-nombre">{{ producto.productos_nombre }}</h3>
+        <code class="producto-codigo">{{ producto.productos_codigo }}</code>
+      </div>
+      <span class="badge" [ngClass]="getEstadoBadge(producto.productos_estado).class">
+        {{ getEstadoBadge(producto.productos_estado).text }}
+      </span>
+    </div>
+
+    <!-- Grid de información -->
+    <div class="detalle-grid">
+      <!-- ID -->
+      <div class="detalle-item">
+        <span class="detalle-label">ID</span>
+        <span class="detalle-value">
+          <span class="badge badge-secondary">#{{ producto.productos_id }}</span>
+        </span>
+      </div>
+
+      <!-- Unidad de Medida -->
+      <div class="detalle-item">
+        <span class="detalle-label">Unidad de Medida</span>
+        <span class="detalle-value">
+          <span class="badge badge-secondary">{{ producto.productos_unidad }}</span>
+        </span>
+      </div>
+
+      <!-- Precio -->
+      <div class="detalle-item">
+        <span class="detalle-label">Precio Unitario</span>
+        <span class="detalle-value precio">{{ formatearPrecio(producto.productos_precio) }}</span>
+      </div>
+
+      <!-- Stock -->
+      <div class="detalle-item">
+        <span class="detalle-label">Stock Disponible</span>
+        <span class="detalle-value">
+          <span 
+            class="badge stock-badge"
+            [ngClass]="isStockBajo(producto.productos_stock) ? 'badge-warning' : 'badge-success'"
+          >
+            {{ formatearStock(producto.productos_stock) }} {{ producto.productos_unidad }}
+          </span>
+          <span *ngIf="isStockBajo(producto.productos_stock)" class="stock-warning">
+            ⚠️ Stock bajo
+          </span>
+        </span>
+      </div>
+
+      <!-- Fecha de Creación -->
+      <div class="detalle-item full-width">
+        <span class="detalle-label">Fecha de Registro</span>
+        <span class="detalle-value fecha">{{ formatearFecha(producto.productos_creado || '') }}</span>
+      </div>
+    </div>
+
+    <!-- Cálculos adicionales -->
+    <div class="detalle-calculos">
+      <div class="calculo-card">
+        <span class="calculo-label">Valor Total en Stock</span>
+        <span class="calculo-value">
+          {{ calcularValorTotal(producto.productos_precio, producto.productos_stock) }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onHide()"
+    >
+      Cerrar
+    </button>
+  </div>
+</p-dialog>

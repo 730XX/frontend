@@ -1,26 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Eye, Pencil, Plus, X } from 'lucide-angular';
+import { Check, Eye, Pencil, Plus, X } from 'lucide-angular';
+import { MessageService } from 'primeng/api';
 import { ProductosService } from '../../../core/services/productos.service';
-import { Producto } from '../../../core/interfaces/api-response.interface';
+import { Producto, ProductoFormData } from '../../../core/interfaces/api-response.interface';
 
 @Component({
   selector: 'app-productos',
   standalone: false,
   templateUrl: './productos.html',
   styleUrl: './productos.scss',
+  providers: [MessageService]
 })
 export class Productos implements OnInit {
-  readonly icons = { Plus, Eye, Pencil, X };
+  readonly icons = { Plus, Eye, Pencil, X, Check };
 
   // Datos reales del backend
   productos: Producto[] = [];
   loading: boolean = false;
   error: string = '';
 
+  // Modal de edición
+  modalVisible: boolean = false;
+  productoSeleccionado: Producto | null = null;
+
+  // Modal de detalles
+  detalleModalVisible: boolean = false;
+  productoIdDetalle: number | null = null;
+
+  // Modal de agregar
+  agregarModalVisible: boolean = false;
+
   constructor(
     private router: Router,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -61,15 +75,108 @@ export class Productos implements OnInit {
   }
 
   navegarNuevo() {
-    this.router.navigate(['/productos/nuevo']);
+    this.agregarModalVisible = true;
+  }
+
+  /**
+   * Crear nuevo producto
+   */
+  crearProducto(data: ProductoFormData): void {
+    this.productosService.create(data).subscribe({
+      next: (response) => {
+        if (response.tipo === 1) {
+          // Cerrar modal
+          this.agregarModalVisible = false;
+          
+          // Recargar productos para mostrar el nuevo
+          this.cargarProductos();
+          
+          // Toast de éxito
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Producto creado correctamente',
+            life: 3000
+          });
+        } else {
+          // Toast de error
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: response.mensajes.join('. '),
+            life: 5000
+          });
+        }
+      },
+      error: (error) => {
+        // Toast de error
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.mensajes?.join('. ') || 'Error al crear producto',
+          life: 5000
+        });
+        console.error('Error creando producto:', error);
+      }
+    });
   }
 
   verProducto(id: number) {
-    this.router.navigate([`/productos/${id}`]);
+    this.productoIdDetalle = id;
+    this.detalleModalVisible = true;
   }
 
   editarProducto(id: number) {
-    this.router.navigate([`/productos/${id}/editar`]);
+    // Buscar el producto en el array
+    const producto = this.productos.find(p => p.productos_id === id);
+    if (producto) {
+      this.productoSeleccionado = producto;
+      this.modalVisible = true;
+    }
+  }
+
+  /**
+   * Guardar producto editado
+   */
+  guardarProducto(event: { id: number, data: ProductoFormData }): void {
+    this.productosService.update(event.id, event.data).subscribe({
+      next: (response) => {
+        if (response.tipo === 1) {
+          // Cerrar modal
+          this.modalVisible = false;
+          this.productoSeleccionado = null;
+          
+          // Recargar productos para mostrar cambios
+          this.cargarProductos();
+          
+          // Toast de éxito
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Producto actualizado correctamente',
+            life: 3000
+          });
+        } else {
+          // Toast de error
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: response.mensajes.join('. '),
+            life: 5000
+          });
+        }
+      },
+      error: (error) => {
+        // Toast de error
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.mensajes?.join('. ') || 'Error al actualizar producto',
+          life: 5000
+        });
+        console.error('Error actualizando producto:', error);
+      }
+    });
   }
 
   /**
@@ -88,13 +195,32 @@ export class Productos implements OnInit {
         if (response.tipo === 1) {
           // Actualizar estado en el array local
           producto.productos_estado = nuevoEstado;
-          console.log(`Producto ${accion} exitosamente`);
+          
+          // Toast de éxito
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: `Producto ${accion} correctamente`,
+            life: 3000
+          });
         } else {
-          alert('Error: ' + response.mensajes.join('. '));
+          // Toast de error
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: response.mensajes.join('. '),
+            life: 5000
+          });
         }
       },
       error: (error) => {
-        alert('Error al cambiar estado: ' + (error.error?.mensajes?.join('. ') || 'Error desconocido'));
+        // Toast de error
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.mensajes?.join('. ') || 'Error al cambiar estado',
+          life: 5000
+        });
         console.error('Error cambiando estado:', error);
       }
     });
@@ -126,7 +252,7 @@ export class Productos implements OnInit {
    * Formatear stock
    */
   formatearStock(stock: string): string {
-    return parseFloat(stock).toFixed(3);
+    return parseFloat(stock).toFixed(0);
   }
 
   /**

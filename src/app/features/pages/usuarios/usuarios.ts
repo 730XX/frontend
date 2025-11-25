@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Eye, Pencil, Plus, X } from 'lucide-angular';
+import { Check, Eye, Pencil, Plus, X } from 'lucide-angular';
+import { MessageService } from 'primeng/api';
 import { UsuariosService } from '../../../core/services/usuarios.service';
 import { Usuario } from '../../../core/interfaces/api-response.interface';
 
@@ -9,10 +10,11 @@ import { Usuario } from '../../../core/interfaces/api-response.interface';
   standalone: false,
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.scss',
+  providers: [MessageService]
 })
 export class Usuarios implements OnInit {
   // Iconos
-  readonly icons = { Plus, Eye, Pencil, X };
+  readonly icons = { Plus, Eye, Pencil, X, Check };
 
   // Datos reales del backend
   usuarios: Usuario[] = [];
@@ -21,7 +23,8 @@ export class Usuarios implements OnInit {
 
   constructor(
     private router: Router,
-    private usuariosService: UsuariosService
+    private usuariosService: UsuariosService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -90,13 +93,32 @@ export class Usuarios implements OnInit {
         if (response.tipo === 1) {
           // Actualizar estado en el array local
           usuario.usuarios_estado = nuevoEstado;
-          console.log(`Usuario ${accion} exitosamente`);
+          
+          // Toast de éxito
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: `Usuario ${accion} correctamente`,
+            life: 3000
+          });
         } else {
-          alert('Error: ' + response.mensajes.join('. '));
+          // Toast de error
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: response.mensajes.join('. '),
+            life: 5000
+          });
         }
       },
       error: (error) => {
-        alert('Error al cambiar estado: ' + (error.error?.mensajes?.join('. ') || 'Error desconocido'));
+        // Toast de error
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.mensajes?.join('. ') || 'Error al cambiar estado',
+          life: 5000
+        });
         console.error('Error cambiando estado:', error);
       }
     });

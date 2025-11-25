@@ -2,6 +2,146 @@
 @import "tailwindcss";
 
 /* ============================================
+   PRIMENG CUSTOM STYLES
+   ============================================ */
+
+/* Modal/Dialog - Forzar tema claro */
+.p-dialog {
+  background: white !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+
+  .p-dialog-header {
+    background: white !important;
+    color: #1e293b !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 1.5rem !important;
+
+    .p-dialog-title {
+      color: #1e293b !important;
+      font-weight: 600 !important;
+    }
+
+    .p-dialog-header-icon {
+      color: #64748b !important;
+
+      &:hover {
+        color: #1e293b !important;
+        background: #f1f5f9 !important;
+      }
+    }
+  }
+
+  .p-dialog-content {
+    background: white !important;
+    color: #1e293b !important;
+    padding: 1.5rem !important;
+  }
+}
+
+/* Inputs y Select en modo claro */
+.p-dialog {
+  input, textarea, .p-inputtext, .p-select, .p-inputnumber {
+    background: white !important;
+    color: #1e293b !important;
+    border: 1px solid #cbd5e1 !important;
+
+    &:focus, &:enabled:focus {
+      border-color: hsl(var(--primary)) !important;
+      box-shadow: 0 0 0 1px hsl(var(--primary)) !important;
+    }
+
+    &::placeholder {
+      color: #94a3b8 !important;
+    }
+  }
+
+  .p-select-label, .p-inputnumber-input {
+    color: #1e293b !important;
+  }
+
+  .p-select-overlay {
+    background: white !important;
+    border: 1px solid #e2e8f0 !important;
+
+    .p-select-option {
+      color: #1e293b !important;
+
+      &:hover {
+        background: #f1f5f9 !important;
+      }
+
+      &.p-focus {
+        background: #e0f2fe !important;
+      }
+    }
+  }
+}
+
+/* Toast - Mantener tema oscuro */
+.p-toast {
+  opacity: 1 !important;
+
+  .p-toast-message {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: white !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+
+    .p-toast-message-icon,
+    .p-toast-icon-close {
+      color: white !important;
+    }
+
+    .p-toast-summary {
+      color: white !important;
+      font-weight: 600 !important;
+    }
+
+    .p-toast-detail {
+      color: #cbd5e1 !important;
+    }
+
+    &.p-toast-message-success {
+      background: #059669 !important;
+      border-color: #10b981 !important;
+
+      .p-toast-message-icon {
+        color: white !important;
+      }
+    }
+
+    &.p-toast-message-error {
+      background: #dc2626 !important;
+      border-color: #ef4444 !important;
+
+      .p-toast-message-icon {
+        color: white !important;
+      }
+    }
+
+    &.p-toast-message-warn {
+      background: #f59e0b !important;
+      border-color: #fbbf24 !important;
+
+      .p-toast-message-icon {
+        color: white !important;
+      }
+    }
+
+    &.p-toast-message-info {
+      background: #0ea5e9 !important;
+      border-color: #38bdf8 !important;
+
+      .p-toast-message-icon {
+        color: white !important;
+      }
+    }
+  }
+}
+
+/* ============================================
    VARIABLES CSS CUSTOM (HSL Format)
    ============================================ */
 @layer theme {
