@@ -50,8 +50,8 @@ export class RoleGuard implements CanActivate {
       return true;
     }
 
-    // Si no tiene permiso, redirigir a productos (o página de "sin permisos")
+    // Si no tiene permiso, redirigir a index (o página de "sin permisos")
     console.warn('⚠️ Acceso denegado. Rol insuficiente.');
-    return this.router.createUrlTree(['/productos']);
+    return this.router.createUrlTree(['/index']);
   }
 }

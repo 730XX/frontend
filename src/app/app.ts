@@ -17,10 +17,18 @@ export class App {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        this.isLoginPage = event.urlAfterRedirects === '/login' || event.url === '/login';
+        this.isLoginPage = this.isLoginRoute(event.urlAfterRedirects) || this.isLoginRoute(event.url);
       });
 
     // Verificar ruta inicial
-    this.isLoginPage = this.router.url === '/login';
+    this.isLoginPage = this.isLoginRoute(this.router.url);
+  }
+
+  /**
+   * Verifica si la URL corresponde a la página de login
+   * Ignora query params como ?returnUrl=...
+   */
+  private isLoginRoute(url: string): boolean {
+    return url.startsWith('/login');
   }
 }

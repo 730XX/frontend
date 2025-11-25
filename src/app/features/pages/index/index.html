@@ -1,0 +1,67 @@
+<div class="space-y-8 p-6">
+
+    <div>
+        <h1 class="text-4xl font-bold text-slate-900 mb-2">
+            Panel de Control
+        </h1>
+        <p class="text-slate-500 text-lg">
+            Bienvenido al Sistema de Gestión de Inventario
+        </p>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div *ngFor="let stat of stats"
+            class="rounded-xl border bg-white text-slate-950 shadow-sm hover:shadow-lg transition-shadow p-6">
+            <div class="flex flex-row items-center justify-between pb-2 space-y-0">
+                <h3 class="tracking-tight text-sm font-medium text-slate-500">
+                    {{ stat.title }}
+                </h3>
+                <lucide-icon [img]="stat.icon" class="h-5 w-5" [ngClass]="stat.color"></lucide-icon>
+            </div>
+
+            <div class="p-0 pt-2">
+                <div class="text-3xl font-bold">{{ stat.value }}</div>
+                <p class="text-xs text-slate-500 mt-1">
+                    {{ stat.description }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-3">
+
+        <div (click)="navegar('/productos')"
+            class="rounded-xl border bg-white text-slate-950 shadow-sm cursor-pointer hover:shadow-lg transition-shadow hover:border-slate-900 p-6">
+            <div class="flex flex-col space-y-1.5">
+                <lucide-icon [img]="icons.Package" class="h-8 w-8 text-slate-900 mb-2"></lucide-icon>
+                <h3 class="text-2xl font-semibold leading-none tracking-tight">Productos</h3>
+                <p class="text-sm text-slate-500">
+                    Gestiona el catálogo completo de productos del inventario
+                </p>
+            </div>
+        </div>
+
+        <div (click)="navegar('/movimientos')"
+            class="rounded-xl border bg-white text-slate-950 shadow-sm cursor-pointer hover:shadow-lg transition-shadow hover:border-emerald-600 p-6">
+            <div class="flex flex-col space-y-1.5">
+                <lucide-icon [img]="icons.TrendingUp" class="h-8 w-8 text-emerald-600 mb-2"></lucide-icon>
+                <h3 class="text-2xl font-semibold leading-none tracking-tight">Movimientos</h3>
+                <p class="text-sm text-slate-500">
+                    Registra y consulta entradas y salidas del inventario (Kardex)
+                </p>
+            </div>
+        </div>
+
+        <div (click)="navegar('/usuarios')"
+            class="rounded-xl border bg-white text-slate-950 shadow-sm cursor-pointer hover:shadow-lg transition-shadow hover:border-amber-500 p-6">
+            <div class="flex flex-col space-y-1.5">
+                <lucide-icon [img]="icons.Users" class="h-8 w-8 text-amber-500 mb-2"></lucide-icon>
+                <h3 class="text-2xl font-semibold leading-none tracking-tight">Usuarios</h3>
+                <p class="text-sm text-slate-500">
+                    Administra los usuarios y sus permisos en el sistema
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LucideAngularModule, Package, TrendingUp, Users, LogOut } from 'lucide-angular';
+import { LucideAngularModule, Package, TrendingUp, Users, LogOut, Home, ShoppingCart } from 'lucide-angular';
 import { Sidebar } from './sidebar/sidebar';
 import { RouterLink } from '@angular/router';
 import { ProductosModal } from './productos-modal/productos-modal';
@@ -28,7 +28,7 @@ import { MovimientosDetalleModal } from './movimientos-detalle-modal/movimientos
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    LucideAngularModule.pick({ Package, TrendingUp, Users, LogOut }),
+    LucideAngularModule.pick({ Package, TrendingUp, Users, LogOut, Home, ShoppingCart }),
     RouterLink,
     Dialog,
     Button,

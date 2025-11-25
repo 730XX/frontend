@@ -23,7 +23,7 @@ export class Login implements OnInit {
   error: string = '';
   
   // URL de retorno después del login
-  private returnUrl: string = '/productos';
+  private returnUrl: string = '/index';
 
   constructor(
     private router: Router,
@@ -33,7 +33,7 @@ export class Login implements OnInit {
 
   ngOnInit(): void {
     // Obtener la URL de retorno desde los query params
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/productos';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/index';
   }
 
   togglePasswordVisibility() {

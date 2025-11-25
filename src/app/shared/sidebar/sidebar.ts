@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Package, TrendingUp, Users, LogOut, ShoppingCart } from 'lucide-angular';
+import { Package, TrendingUp, Users, LogOut, ShoppingCart, Home } from 'lucide-angular';
 import { AuthService } from '../../core/services/auth.service';
 import { Usuario } from '../../core/interfaces/api-response.interface';
 
@@ -23,6 +23,7 @@ export class Sidebar implements OnInit {
 
   // Definimos los iconos para usarlos en el HTML
   readonly icons = {
+    Home,
     Package,
     TrendingUp,
     Users,
@@ -35,6 +36,12 @@ export class Sidebar implements OnInit {
 
   // Todos los items del menú (con restricciones de roles)
   private allMenuItems: MenuItem[] = [
+    { 
+      title: 'Dashboard', 
+      url: '/index', 
+      icon: this.icons.Home 
+      // Sin roles = accesible para todos
+    },
     { 
       title: 'Productos', 
       url: '/productos', 

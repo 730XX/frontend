@@ -29,10 +29,10 @@ export class LoginGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     
-    // Si el usuario YA está autenticado, redirigir a productos
+    // Si el usuario YA está autenticado, redirigir a index
     if (this.authService.hasValidSession()) {
-      console.log('✅ Usuario ya autenticado. Redirigiendo a productos...');
-      return this.router.createUrlTree(['/productos']);
+      console.log('✅ Usuario ya autenticado. Redirigiendo a dashboard...');
+      return this.router.createUrlTree(['/index']);
     }
 
     // Si no está autenticado, permitir acceso al login

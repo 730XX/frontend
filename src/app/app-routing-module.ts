@@ -4,16 +4,17 @@ import { Productos } from './features/pages/productos/productos';
 import { Movimientos } from './features/pages/movimientos/movimientos';
 import { Usuarios } from './features/pages/usuarios/usuarios';
 import { Login } from './features/pages/login/login';
+import { Index } from './features/pages/index/index';
 import { AuthGuard } from './core/interceptors/auth.guard';
 import { LoginGuard } from './core/interceptors/login.guard';
 import { RoleGuard } from './core/interceptors/role.guard';
 import { Ventas } from './features/pages/ventas/ventas';
 
 const routes: Routes = [
-  // Ruta raíz - redirige según autenticación
+  // Ruta raíz - redirige a index
   { 
     path: '', 
-    redirectTo: '/login', 
+    redirectTo: '/index', 
     pathMatch: 'full' 
   },
   
@@ -22,6 +23,13 @@ const routes: Routes = [
     path: 'login', 
     component: Login,
     canActivate: [LoginGuard]
+  },
+  
+  // Dashboard principal
+  { 
+    path: 'index', 
+    component: Index,
+    canActivate: [AuthGuard]
   },
   
   // Rutas protegidas - requieren autenticación
