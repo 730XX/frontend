@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Eye, Pencil, Plus } from 'lucide-angular';
+import { Eye, Pencil, Plus, Download } from 'lucide-angular';
 import { MovimientosService } from '../../../core/services/movimientos.service';
 import { ReportesService } from '../../../core/services/reportes.service';
 import { Movimiento } from '../../../core/interfaces/api-response.interface';
@@ -12,7 +12,7 @@ import { Movimiento } from '../../../core/interfaces/api-response.interface';
   styleUrl: './movimientos.scss',
 })
 export class Movimientos implements OnInit {
-  readonly icons = { Plus, Eye, Pencil };
+  readonly icons = { Plus, Eye, Pencil, Download };
 
   // Datos reales del backend
   movimientos: Movimiento[] = [];

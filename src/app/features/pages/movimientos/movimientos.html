@@ -10,7 +10,10 @@
             <button (click)="descargarReporte()"
                 class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-emerald-600 text-white hover:bg-emerald-700 h-10 px-4 py-2 gap-2"
                 [disabled]="descargando">
-                <span *ngIf="!descargando">📊 Exportar Excel</span>
+                <lucide-icon [img]="icons.Download" class="h-4 w-4 inline-flex"> </lucide-icon>
+                <span *ngIf="!descargando">Exportar Excel
+                  
+                     </span>
                 <span *ngIf="descargando">Descargando...</span>
             </button>
         </div>
